@@ -3,7 +3,7 @@
 
 apk2url easily extracts URL and IP endpoints from an APK file to a .txt output. This is suitable for information gathering by red team, penetration testers and developers to quickly identify endpoints associated with an application.
 
-**Note:** apk2url disassembling to Smali and performs Java decompilation to identify URLs and IPs.
+**Note:** apk2url disassembles to Smali and performs Java decompilation to identify URLs and IPs.
 
 
 ## Usage
@@ -19,7 +19,7 @@ apk2url /path/to/apk/file.apk
 ```
 
 By default, the program does not log the path where endpoints are discovered.    
-To enable logging, run as follow:
+To enable logging, run as follows:
 
 ```bash
 apk2url /path/to/apk/file.apk log
