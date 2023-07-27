@@ -13,11 +13,6 @@ if ! [ -x "$(command -v apktool)" ]; then
   exit 1
 fi
 
-if ! [ -x "$(command -v bytecode-viewer)" ]; then
-    echo '[!] Error: bytecode-viewer is not installed. Run apt-get install bytecode-viewertool' >&2
-    exit 1
-fi
-
 if ! [ -x "$(command -v jadx)" ]; then
   echo '[!] Error: jadx is not installed. Run apt-get install jadx' >&2
   exit 1
