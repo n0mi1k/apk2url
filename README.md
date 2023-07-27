@@ -30,4 +30,4 @@ Use `apt` for easy installation of these tools:
 - Jadx
 ## Demo Run
 
-<img width="496" alt="image" src="https://github.com/n0mi1k/apk2url/assets/28621928/75e1d421-ff72-47b6-8e82-996d655cce5e">
+![image](https://github.com/n0mi1k/apk2url/assets/28621928/9745d6fc-7d59-43e3-9818-1740a71ad4fa)
