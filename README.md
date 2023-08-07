@@ -30,4 +30,7 @@ Use `apt` for easy installation of these tools:
 - Jadx
 ## Demo Run
 
-![image](https://github.com/n0mi1k/apk2url/assets/28621928/9745d6fc-7d59-43e3-9818-1740a71ad4fa)
+<img src="https://github.com/n0mi1k/apk2url/assets/28621928/9745d6fc-7d59-43e3-9818-1740a71ad4fa" alt="Image" width="600">
+
+## Disclaimer
+This tool is for educational and testing purposes only. Do not use it to exploit the vulnerability on any system that you do not own or have permission to test. The authors of this script are not responsible for any misuse or damage caused by its use.
