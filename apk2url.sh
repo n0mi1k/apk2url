@@ -7,6 +7,7 @@ purple='\033[0;35m'
 cyan='\033[0;36m'
 reset='\033[0m'
 
+
 printf """$green       
  █████╗ ██████╗ ██╗  ██╗██████╗ ██╗   ██╗██████╗ ██╗     
 ██╔══██╗██╔══██╗██║ ██╔╝╚════██╗██║   ██║██╔══██╗██║   
@@ -51,6 +52,14 @@ extractEndpoints() {
         printf "%s\n" "$rawipmatch" >> "$WORKDIR/${BASENAME}_log.txt"
     fi
 
+    printf "$purple[~] Performing Uniq Filter...$reset"
+    grep -oE '((http|https)://[^/]+)' ${WORKDIR}/${BASENAME}_endpoints.txt | awk -F/ '{print $1 "//" $3}' | sort -u > ${WORKDIR}/${BASENAME}_uniqurls.txt
+    grep -E '^www.*' ${WORKDIR}/${BASENAME}_endpoints.txt >> ${WORKDIR}/${BASENAME}_uniqurls.txt
+    grep -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}.*' ${WORKDIR}/${BASENAME}_endpoints.txt >> ${WORKDIR}/${BASENAME}_uniqurls.txt
+
+
+    printf "$purple\n[~] Wrote Uniq Domains to: ${WORKDIR}/${BASENAME}_uniqurls.txt\n$reset"
+
     printf "$green[*] Endpoints Extracted to: ${WORKDIR}/${BASENAME}_endpoints.txt\n$reset"
 }
 
@@ -72,8 +81,8 @@ fi
 if [ -d "$DECOMPILEDIR" ]; then
     read -p "[*] APK was decompiled before. Do you want to overwrite it? (y/n): " choice
     if [[ "${choice,,}" == "y" ]]; then
-        rm -Rf "$DECOMPILEDIR"
         printf "$green[+] Cleaning Up...\n$reset"
+        rm -Rf "$DECOMPILEDIR"
     else
         printf "$red[+] Action Aborted...$reset"
         exit 1
@@ -81,6 +90,7 @@ if [ -d "$DECOMPILEDIR" ]; then
 fi
 
 mkdir $DECOMPILEDIR
+printf "$yellow[~] SHA256: $(shasum -a 256 $1 | awk '{print $1}')\n$reset"
 dissectApktool
 dissectJadx
 extractEndpoints $2
