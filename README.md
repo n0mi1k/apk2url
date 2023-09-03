@@ -17,7 +17,7 @@ After that you can run apk2url anywhere:
 ```bash
 apk2url /path/to/apk/file.apk
 ```
-By default there are 2 output files:  
+By default there are 2 output files in the "endpoints" directory:  
 - \<apkname\>_endpoints.txt - **Contains endpoints with url paths, has duplicates**
 - \<apkname\>_uniqurls.txt - **Contains unique endpoints**
 

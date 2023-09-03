@@ -23,6 +23,7 @@ APKPATH="`pwd`/$1"
 DECOMPILEDIR="${WORKDIR}/${BASENAME}-decompiled"
 APKTOOLDIR="${DECOMPILEDIR}/${BASENAME}_apktool"
 JADXDIR="${DECOMPILEDIR}/${BASENAME}_jadx"
+ENDPOINTDIR="${WORKDIR}/endpoints/"
 
 dissectApktool() {
     printf "$cyan[+] Disassembling ${1}with Apktool...\n$reset"
@@ -39,28 +40,26 @@ extractEndpoints() {
     printf "$yellow[~] Extracting URLs...\n$reset"
     rawurlmatch=$(grep -rIoE '(\b(https?|ftp|file)://|www\.)[-A-Za-z0-9+&@#/%?=~_|!:,.;]*[-A-Za-z0-9+&@#/%=~_|]' $DECOMPILEDIR)
     urlmatches=$(printf "%s" "$rawurlmatch" | awk -F':' '{sub(/^[^:]+:/, "", $0); print}' | sort -u)
-    printf "%s\n" "$urlmatches" > "${WORKDIR}/${BASENAME}_endpoints.txt"
+    printf "%s\n" "$urlmatches" > "${ENDPOINTDIR}/${BASENAME}_endpoints.txt"
 
     printf "$yellow[~] Extracting IPs...\n$reset"
     rawipmatch=$(grep -rIoE '\b((https?|ftp|file)://)?([0-9]{1,3}\.){3}[0-9]{1,3}:[0-9]{1,5}\b' $DECOMPILEDIR)
     ipmatches=$(printf "%s" "$rawipmatch"| awk -F':' '{sub(/^[^:]+:/, "", $0); print}' | sort -u)    
-    printf "%s\n" "$ipmatches" >> "${WORKDIR}/${BASENAME}_endpoints.txt"
+    printf "%s\n" "$ipmatches" >> "${ENDPOINTDIR}/${BASENAME}_endpoints.txt"
 
     if [[ $1 == "log" ]]; then
-        printf "$purple[~] Writing Logs to: ${WORKDIR}/${BASENAME}_log.txt\n$reset"
-        printf "%s\n" "$rawurlmatch" > "$WORKDIR/${BASENAME}_log.txt"
-        printf "%s\n" "$rawipmatch" >> "$WORKDIR/${BASENAME}_log.txt"
+        printf "$purple[~] Writing Logs to: ${ENDPOINTDIR}/${BASENAME}_log.txt\n$reset"
+        printf "%s\n" "$rawurlmatch" > "$ENDPOINTDIR/${BASENAME}_log.txt"
+        printf "%s\n" "$rawipmatch" >> "$ENDPOINTDIR/${BASENAME}_log.txt"
     fi
 
     printf "$purple[~] Performing Uniq Filter...$reset"
-    grep -oE '((http|https)://[^/]+)' ${WORKDIR}/${BASENAME}_endpoints.txt | awk -F/ '{print $1 "//" $3}' | sort -u > ${WORKDIR}/${BASENAME}_uniqurls.txt
-    grep -E '^www.*' ${WORKDIR}/${BASENAME}_endpoints.txt >> ${WORKDIR}/${BASENAME}_uniqurls.txt
-    grep -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}.*' ${WORKDIR}/${BASENAME}_endpoints.txt >> ${WORKDIR}/${BASENAME}_uniqurls.txt
-
-
-    printf "$purple\n[~] Wrote Uniq Domains to: ${WORKDIR}/${BASENAME}_uniqurls.txt\n$reset"
-
-    printf "$green[*] Endpoints Extracted to: ${WORKDIR}/${BASENAME}_endpoints.txt\n$reset"
+    grep -oE '((http|https)://[^/]+)' ${ENDPOINTDIR}/${BASENAME}_endpoints.txt | awk -F/ '{print $1 "//" $3}' | sort -u > ${ENDPOINTDIR}/${BASENAME}_uniqurls.txt
+    grep -E '^www.*' ${ENDPOINTDIR}/${BASENAME}_endpoints.txt >> ${ENDPOINTDIR}/${BASENAME}_uniqurls.txt
+    grep -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}.*' ${ENDPOINTDIR}/${BASENAME}_endpoints.txt >> ${ENDPOINTDIR}/${BASENAME}_uniqurls.txt
+    
+    printf "$purple\n[~] Wrote Uniq Domains to: ${ENDPOINTDIR}/${BASENAME}_uniqurls.txt\n$reset"
+    printf "$green[*] Endpoints Extracted to: ${ENDPOINTDIR}/${BASENAME}_endpoints.txt\n$reset"
 }
 
 if [[ -z $1 ]]; then
@@ -90,6 +89,11 @@ if [ -d "$DECOMPILEDIR" ]; then
 fi
 
 mkdir $DECOMPILEDIR
+
+if [ ! -d "$ENDPOINTDIR" ]; then
+    mkdir "$ENDPOINTDIR"
+fi
+
 printf "$yellow[~] SHA256: $(shasum -a 256 $1 | awk '{print $1}')\n$reset"
 dissectApktool
 dissectJadx
