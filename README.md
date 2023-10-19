@@ -20,7 +20,7 @@ By default there are 2 output files in the "endpoints" directory:
 - \<apkname\>_endpoints.txt - **Contains endpoints with url paths, has duplicates**
 - \<apkname\>_uniqurls.txt - **Contains unique endpoints**
 
-By default, the program does not log the path where endpoints are discovered.    
+By default, the program does not log the APK file path where endpoints are discovered.    
 To enable logging, run as follows:
 
 ```bash

@@ -10,8 +10,8 @@ reset='\033[0m'
 
 printf """$green       
  █████╗ ██████╗ ██╗  ██╗██████╗ ██╗   ██╗██████╗ ██╗     
-██╔══██╗██╔══██╗██║ ██╔╝╚════██╗██║   ██║██╔══██╗██║   
-███████║██████╔╝█████╔╝  █████╔╝██║   ██║██████╔╝██║By     
+██╔══██╗██╔══██╗██║ ██╔╝╚════██╗██║   ██║██╔══██╗██║v1.1
+███████║██████╔╝█████╔╝  █████╔╝██║   ██║██████╔╝██║By    
 ██╔══██║██╔═══╝ ██╔═██╗ ██╔═══╝ ██║   ██║██╔══██╗██║n0mi1k     
 ██║  ██║██║     ██║  ██╗███████╗╚██████╔╝██║  ██║███████╗
 ╚═╝  ╚═╝╚═╝     ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝
@@ -38,12 +38,12 @@ dissectJadx() {
 extractEndpoints() {
     printf "$green[+] Beginning Endpoint Extraction...\n$reset"
     printf "$yellow[~] Extracting URLs...\n$reset"
-    rawurlmatch=$(grep -rIoE '(\b(https?|ftp|file)://|www\.)[-A-Za-z0-9+&@#/%?=~_|!:,.;]*[-A-Za-z0-9+&@#/%=~_|]' $DECOMPILEDIR)
+    rawurlmatch=$(grep -rIoE '(\b(https?)://|www\.)[-A-Za-z0-9+&@#/%?=~_|!:,.;]*[-A-Za-z0-9+&@#/%=~_|]' $DECOMPILEDIR)
     urlmatches=$(printf "%s" "$rawurlmatch" | awk -F':' '{sub(/^[^:]+:/, "", $0); print}' | sort -u)
     printf "%s\n" "$urlmatches" > "${ENDPOINTDIR}/${BASENAME}_endpoints.txt"
 
     printf "$yellow[~] Extracting IPs...\n$reset"
-    rawipmatch=$(grep -rIoE '\b((https?|ftp|file)://)?([0-9]{1,3}\.){3}[0-9]{1,3}:[0-9]{1,5}\b' $DECOMPILEDIR)
+    rawipmatch=$(grep -rIoP '\b((https?)://)?(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b(?::\b(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{0,3}))?' $DECOMPILEDIR)
     ipmatches=$(printf "%s" "$rawipmatch"| awk -F':' '{sub(/^[^:]+:/, "", $0); print}' | sort -u)    
     printf "%s\n" "$ipmatches" >> "${ENDPOINTDIR}/${BASENAME}_endpoints.txt"
 
