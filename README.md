@@ -1,10 +1,10 @@
 # apk2url
 
-apk2url easily extracts URL and IP endpoints from an APK file to a .txt output. This is suitable for information gathering by red team, penetration testers and developers to quickly identify endpoints associated with an application.
+apk2url easily extracts URL and IP endpoints from an APK file to a .txt output. This is suitable for information gathering by the red team, penetration testers and developers to quickly identify endpoints associated with an application.
 
-**Note:** apk2url disassembles to Smali and performs Java decompilation to identify URLs and IPs.
+**NOTE: Why use apk2url?** When compared with APKleaks, MobSF and AppInfoScanner, apk2url identifies a significantly higher number of endpoints.
 
-*Inspired by [diggy](https://github.com/s0md3v/Diggy), apk2url is rewritten and upgraded with IP support, stronger regex, filtering and Jadx decompilation.*
+*Inspired by [diggy](https://github.com/s0md3v/Diggy), apk2url is rewritten and upgraded with IP support, stronger regex, auto filtering and Jadx decompilation.*
 
 ## Usage
 ```bash
@@ -17,8 +17,8 @@ After that you can run apk2url anywhere:
 apk2url /path/to/apk/file.apk
 ```
 By default there are 2 output files in the "endpoints" directory:  
-- \<apkname\>_endpoints.txt - **Contains endpoints with url paths, has duplicates**
-- \<apkname\>_uniqurls.txt - **Contains unique endpoints**
+- \<apkname\>_endpoints.txt - **Contains endpoints with full URL paths**
+- \<apkname\>_uniqurls.txt - **Contains unique endpoint domains and IPs**
 
 By default, the program does not log the APK file path where endpoints are discovered.    
 To enable logging, run as follows:
