@@ -7,6 +7,7 @@ apk2url easily extracts URL and IP endpoints from an APK file to a .txt output. 
 *Inspired by [diggy](https://github.com/s0md3v/Diggy), apk2url is rewritten and upgraded with IP support, stronger regex, auto filtering and Jadx decompilation.*
 
 ## Running apk2url
+**NOTE:** apk2url requires apktool and jadx which can be easily installed with `apt`. Please refer to the dependencies section.
 ```bash
 git clone https://github.com/n0mi1k/apk2url
 ```
@@ -33,8 +34,8 @@ apk2url /path/to/apk/file.apk log
 
 ## Dependencies
 Use `apt` for easy installation of these tools required by apk2url:
-- Apktool
-- Jadx
+- sudo apt install apktool
+- sudo apt install jadx
 
 ## Demonstration
 <img width="628" alt="image" src="https://github.com/n0mi1k/apk2url/assets/28621928/7a251297-c1e5-49ba-abe2-6aba67c9fee7">
