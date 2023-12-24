@@ -121,6 +121,8 @@ if [ -d $1 ]; then
 
         if [[ "$1" == .\/* ]]; then
             APKPATH="`pwd`/${i:2}"
+        elif [[ "$1" == '.' ]]; then
+            APKPATH="`pwd`/$i"
         else
             APKPATH="$i"
         fi
