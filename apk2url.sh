@@ -10,20 +10,12 @@ reset='\033[0m'
 
 printf """$green       
  █████╗ ██████╗ ██╗  ██╗██████╗ ██╗   ██╗██████╗ ██╗     
-██╔══██╗██╔══██╗██║ ██╔╝╚════██╗██║   ██║██╔══██╗██║v1.1
+██╔══██╗██╔══██╗██║ ██╔╝╚════██╗██║   ██║██╔══██╗██║v1.2
 ███████║██████╔╝█████╔╝  █████╔╝██║   ██║██████╔╝██║By    
 ██╔══██║██╔═══╝ ██╔═██╗ ██╔═══╝ ██║   ██║██╔══██╗██║n0mi1k     
 ██║  ██║██║     ██║  ██╗███████╗╚██████╔╝██║  ██║███████╗
 ╚═╝  ╚═╝╚═╝     ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝
 $reset"""
-
-BASENAME="$(basename $1 .apk)"
-WORKDIR=`pwd`
-APKPATH="`pwd`/$1"
-DECOMPILEDIR="${WORKDIR}/${BASENAME}-decompiled"
-APKTOOLDIR="${DECOMPILEDIR}/${BASENAME}_apktool"
-JADXDIR="${DECOMPILEDIR}/${BASENAME}_jadx"
-ENDPOINTDIR="${WORKDIR}/endpoints/"
 
 dissectApktool() {
     printf "$cyan[+] Disassembling ${1}with Apktool...\n$reset"
@@ -47,7 +39,7 @@ extractEndpoints() {
     ipmatches=$(printf "%s" "$rawipmatch"| awk -F':' '{sub(/^[^:]+:/, "", $0); print}' | sort -u)    
     printf "%s\n" "$ipmatches" >> "${ENDPOINTDIR}/${BASENAME}_endpoints.txt"
 
-    if [[ $1 == "log" ]]; then
+    if [[ $2 == "log" ]]; then
         printf "$purple[~] Writing Logs to: ${ENDPOINTDIR}/${BASENAME}_log.txt\n$reset"
         printf "%s\n" "$rawurlmatch" > "$ENDPOINTDIR/${BASENAME}_log.txt"
         printf "%s\n" "$rawipmatch" >> "$ENDPOINTDIR/${BASENAME}_log.txt"
@@ -62,8 +54,46 @@ extractEndpoints() {
     printf "$green[*] Endpoints Extracted to: ${ENDPOINTDIR}/${BASENAME}_endpoints.txt\n$reset"
 }
 
+mainJob() {
+    printf "$green[++++] Decompiling $BASENAME.apk \n$reset"
+    printf "$yellow[~] SHA256: $(shasum -a 256 $1 | awk '{print $1}')\n$reset"
+    dissectApktool
+    dissectJadx
+    extractEndpoints $1 $2
+}
+
+checkDecompileDir() {
+    if [ -d "$DECOMPILEDIR" ]; then
+        read -p "[*] $BASENAME.apk was decompiled before. Do you want to overwrite it? (y/n): " choice
+        if [[ "${choice,,}" == "y" ]]; then
+            printf "$green[+] Cleaning Up...\n$reset"
+            rm -Rf "$DECOMPILEDIR"
+        else
+            printf "$red[+] Action Aborted...$reset"
+            exit 1
+        fi
+    fi
+}
+
+BASENAME="$(basename $1 .apk)"
+WORKDIR=`pwd`
+
+# Check pathing format
+if [[ "$1" == .\/* ]]; then
+    APKPATH="`pwd`/${1:2}"
+elif [[ "$1" == */* ]]; then
+    APKPATH="$1"
+else
+    APKPATH="`pwd`/$1"
+fi
+
+DECOMPILEDIR="${WORKDIR}/${BASENAME}-decompiled"
+APKTOOLDIR="${DECOMPILEDIR}/${BASENAME}_apktool"
+JADXDIR="${DECOMPILEDIR}/${BASENAME}_jadx"
+ENDPOINTDIR="${WORKDIR}/endpoints/"
+
 if [[ -z $1 ]]; then
-    printf "Usage: apk2url <Name of APK File>\n"
+    printf "Usage: apk2url <Name of APK File / Folder of APKs>\n"
     exit 1
 fi
 
@@ -77,24 +107,34 @@ if ! [ -x "$(command -v jadx)" ]; then
     exit 1
 fi
 
-if [ -d "$DECOMPILEDIR" ]; then
-    read -p "[*] APK was decompiled before. Do you want to overwrite it? (y/n): " choice
-    if [[ "${choice,,}" == "y" ]]; then
-        printf "$green[+] Cleaning Up...\n$reset"
-        rm -Rf "$DECOMPILEDIR"
-    else
-        printf "$red[+] Action Aborted...$reset"
-        exit 1
-    fi
-fi
-
-mkdir $DECOMPILEDIR
-
 if [ ! -d "$ENDPOINTDIR" ]; then
     mkdir "$ENDPOINTDIR"
 fi
 
-printf "$yellow[~] SHA256: $(shasum -a 256 $1 | awk '{print $1}')\n$reset"
-dissectApktool
-dissectJadx
-extractEndpoints $2
+if [ -d $1 ]; then
+    printf "$green[+] Directory specified. Will extract all APKs..\n$reset"
+    files=("$1/"*.apk)
+    for i in "${files[@]}"; do
+        # Set new APK parameters
+        BASENAME="$(basename $i .apk)"
+        WORKDIR=`pwd`
+
+        if [[ "$1" == .\/* ]]; then
+            APKPATH="`pwd`/${i:2}"
+        else
+            APKPATH="$i"
+        fi
+
+        DECOMPILEDIR="${WORKDIR}/${BASENAME}-decompiled"
+        APKTOOLDIR="${DECOMPILEDIR}/${BASENAME}_apktool"
+        JADXDIR="${DECOMPILEDIR}/${BASENAME}_jadx"
+        ENDPOINTDIR="${WORKDIR}/endpoints/"
+        checkDecompileDir
+        mkdir $DECOMPILEDIR
+        mainJob $i $2
+    done
+else
+    checkDecompileDir
+    mkdir $DECOMPILEDIR
+    mainJob $1 $2
+fi
