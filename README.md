@@ -2,7 +2,14 @@
 
 apk2url easily extracts URL and IP endpoints from an APK file and performs filtering into a .txt output. This is suitable for information gathering by the red team, penetration testers and developers to quickly identify endpoints associated with an application.
 
-**NOTE: Why use apk2url?** When compared with APKleaks, MobSF and AppInfoScanner, apk2url identifies a significantly higher number of endpoints. It provides **comprehensive information, with IPs, URLs, Interesting URL paths with the option to display the source file where it was found in the APK.**
+**NOTE: Why use apk2url?** When compared with APKleaks, MobSF and AppInfoScanner, apk2url identifies a significantly higher number of endpoints with additional features. 
+
+## Features
+- (sub)domain enumeration : Find unique domains and subdomains
+- URL + URI Path Finder : Finds interesting URLs with paths and GET params
+- IP Address finder : Finds IP addresses
+- Log endpoint source : See filename within APK where endpoints were discovered
+- Easy to install : Easy installation, run on the fly
 
 ## Running apk2url
 **NOTE:** apk2url requires apktool and jadx which can be easily installed with `apt`. Please refer to the dependencies section.
@@ -36,7 +43,7 @@ apk2url /path/to/apk/file.apk log
 **Tested on Kali 2023.2 and Ubuntu 22.04*
 
 ## Dependencies
-Use `apt` for easy installation of these tools required by apk2url:
+Use `apt` for easy installation of these tools required by apk2url or use `install.sh`:
 - sudo apt install apktool
 - sudo apt install jadx
 
